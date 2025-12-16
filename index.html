@@ -5,55 +5,150 @@
 <title>Legal Statement Organizer</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<!-- Google Font -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
 <style>
+/* ---------- Base Styles ---------- */
 body {
-font-family: Arial, sans-serif;
-background: #f4f6f8;
+font-family: 'Inter', Arial, sans-serif;
+margin: 0;
 padding: 20px;
+background: linear-gradient(120deg, #f4f6f8, #e3f2fd, #f0f9ff);
+background-size: 600% 600%;
+animation: gradientShift 20s ease infinite;
+color: #333;
 }
+
+@keyframes gradientShift {
+0% {background-position:0% 50%;}
+50% {background-position:100% 50%;}
+100% {background-position:0% 50%;}
+}
+
 .container {
 max-width: 750px;
 margin: auto;
 background: white;
-padding: 20px;
-border-radius: 6px;
+padding: 30px 25px;
+border-radius: 12px;
+box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+transform: translateY(0px);
+transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
+
+.container:hover {
+transform: translateY(-5px);
+box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+}
+
+h2 {
+color: #1f6feb;
+font-weight: 600;
+text-align: center;
+margin-bottom: 20px;
+}
+
 label {
-font-weight: bold;
+font-weight: 600;
+display: block;
+margin-bottom: 5px;
 }
-textarea, input, select {
+
+input, textarea, select {
 width: 100%;
-margin-bottom: 15px;
-padding: 10px;
-}
-button {
 padding: 12px;
+margin-bottom: 20px;
+border-radius: 8px;
+border: 1px solid #ccc;
+transition: border 0.3s, box-shadow 0.3s;
+font-size: 15px;
+}
+
+input:focus, textarea:focus, select:focus {
+border-color: #1f6feb;
+box-shadow: 0 0 10px rgba(31,111,235,0.2);
+outline: none;
+}
+
+button {
+padding: 14px;
 width: 100%;
 background: #1f6feb;
 color: white;
 border: none;
 font-size: 16px;
+border-radius: 8px;
 cursor: pointer;
+transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
 }
-button:disabled {
-background: #999;
+
+button:hover {
+background: #155bcf;
+transform: translateY(-2px);
+box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
+
 .output {
 white-space: pre-wrap;
-background: #f0f0f0;
+background: #f9f9f9;
 padding: 15px;
 margin-top: 20px;
+border-radius: 8px;
+border: 1px solid #e0e0e0;
 }
+
 .notice {
-font-size: 12px;
+font-size: 13px;
 color: #555;
-margin-bottom: 15px;
+margin-bottom: 20px;
 }
+
 .paywall {
 background: #fff3cd;
-padding: 15px;
-margin-top: 20px;
-border: 1px solid #ffeeba;
+border-left: 5px solid #ffeeba;
+border-radius: 8px;
+padding: 20px;
+margin-top: 25px;
+box-shadow: 0 3px 6px rgba(0,0,0,0.05);
+animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+0% { box-shadow: 0 3px 6px rgba(0,0,0,0.05); }
+50% { box-shadow: 0 6px 12px rgba(0,0,0,0.1); }
+100% { box-shadow: 0 3px 6px rgba(0,0,0,0.05); }
+}
+
+/* Section dividers & fade-in */
+.section {
+border-bottom: 1px solid #e0e0e0;
+padding-bottom: 15px;
+margin-bottom: 20px;
+opacity: 0;
+animation: fadeIn 1s forwards;
+}
+
+.section:nth-child(1) { animation-delay: 0.2s; }
+.section:nth-child(2) { animation-delay: 0.4s; }
+.section:nth-child(3) { animation-delay: 0.6s; }
+
+@keyframes fadeIn {
+to { opacity: 1; }
+}
+
+/* Icons */
+label::before {
+content: "📝 ";
+display: inline-block;
+margin-right: 4px;
+transition: transform 0.3s, color 0.3s;
+}
+
+label:hover::before {
+transform: scale(1.2);
+color: #1f6feb;
 }
 </style>
 </head>
@@ -64,9 +159,10 @@ border: 1px solid #ffeeba;
 
 <p class="notice">
 This tool helps organize your own words into a clear written statement for communication with a lawyer or court.
-It does not provide legal advice and does not replace an attorney.
+It does <strong>not</strong> provide legal advice and does not replace an attorney.
 </p>
 
+<div class="section">
 <label>Your Full Legal Name</label>
 <input id="name">
 
@@ -90,7 +186,9 @@ It does not provide legal advice and does not replace an attorney.
 <option>The Court</option>
 <option>Both</option>
 </select>
+</div>
 
+<div class="section">
 <label>Chronological Summary of Events (facts only)</label>
 <textarea id="facts" rows="5"></textarea>
 
@@ -99,6 +197,7 @@ It does not provide legal advice and does not replace an attorney.
 
 <label>What outcome or clarification are you requesting?</label>
 <textarea id="request" rows="3"></textarea>
+</div>
 
 <button onclick="generate()">Generate Preview</button>
 
