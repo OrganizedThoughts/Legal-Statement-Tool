@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Legal Statement Organizer</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+body {
+font-family: Arial, sans-serif;
+background: #f4f6f8;
+padding: 20px;
+}
+.container {
+max-width: 750px;
+margin: auto;
+background: white;
+padding: 20px;
+border-radius: 6px;
+}
+label {
+font-weight: bold;
+}
+textarea, input, select {
+width: 100%;
+margin-bottom: 15px;
+padding: 10px;
+}
+button {
+padding: 12px;
+width: 100%;
+background: #1f6feb;
+color: white;
+border: none;
+font-size: 16px;
+cursor: pointer;
+}
+button:disabled {
+background: #999;
+}
+.output {
+white-space: pre-wrap;
+background: #f0f0f0;
+padding: 15px;
+margin-top: 20px;
+}
+.notice {
+font-size: 12px;
+color: #555;
+margin-bottom: 15px;
+}
+.paywall {
+background: #fff3cd;
+padding: 15px;
+margin-top: 20px;
+border: 1px solid #ffeeba;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+<h2>Legal Statement Organizer</h2>
+
+<p class="notice">
+This tool helps organize your own words into a clear written statement for communication with a lawyer or court.
+It does not provide legal advice and does not replace an attorney.
+</p>
+
+<label>Your Full Legal Name</label>
+<input id="name">
+
+<label>State (optional)</label>
+<input id="state" placeholder="e.g., New York">
+
+<label>Type of Matter</label>
+<select id="matter">
+<option>Family Court</option>
+<option>Custody / Visitation</option>
+<option>Child Support</option>
+<option>Divorce</option>
+<option>Landlord / Tenant</option>
+<option>Civil Matter</option>
+<option>Other Legal Matter</option>
+</select>
+
+<label>Who is this statement for?</label>
+<select id="recipient">
+<option>My Attorney</option>
+<option>The Court</option>
+<option>Both</option>
+</select>
+
+<label>Chronological Summary of Events (facts only)</label>
+<textarea id="facts" rows="5"></textarea>
+
+<label>Key Concerns or Issues</label>
+<textarea id="concerns" rows="4"></textarea>
+
+<label>What outcome or clarification are you requesting?</label>
+<textarea id="request" rows="3"></textarea>
+
+<button onclick="generate()">Generate Preview</button>
+
+<div id="preview" class="output"></div>
+
+<div id="paywall" class="paywall" style="display:none;">
+<p><strong>Unlock Full Statement PDF</strong></p>
+<p>One-time fee: <strong>$10</strong></p>
+<p>
+<a href="https://www.paypal.me/YOURPAYPAL/10" target="_blank">
+👉 Pay to Unlock
+</a>
+</p>
+<p>After payment, click below to download your PDF.</p>
+<button onclick="downloadPDF()">Download PDF</button>
+</div>
+
+</div>
+
+<script>
+let finalText = "";
+
+function generate() {
+const name = document.getElementById("name").value;
+const state = document.getElementById("state").value || "the applicable jurisdiction";
+const matter = document.getElementById("matter").value;
+const recipient = document.getElementById("recipient").value;
+const facts = document.getElementById("facts").value;
+const concerns = document.getElementById("concerns").value;
+const request = document.getElementById("request").value;
+
+finalText = `
+STATEMENT FOR LEGAL COMMUNICATION
+
+Name: ${name}
+State / Jurisdiction: ${state}
+Matter Type: ${matter}
+Intended Recipient: ${recipient}
+
+I respectfully submit this written statement to clearly and accurately communicate relevant information regarding my legal matter. This statement is intended to assist in organized communication and is based on my personal knowledge and recollection.
+
+SUMMARY OF EVENTS:
+${facts}
+
+KEY CONCERNS:
+${concerns}
+
+REQUEST / PURPOSE OF THIS STATEMENT:
+${request}
+
+I affirm that the information provided above is true and accurate to the best of my knowledge and belief.
+
+Respectfully submitted,
+
+${name}
+Date: ${new Date().toLocaleDateString()}
+`;
+
+document.getElementById("preview").innerText =
+finalText.substring(0, 650) + "\n\n--- Preview Only ---";
+
+document.getElementById("paywall").style.display = "block";
+}
+
+function downloadPDF() {
+const { jsPDF } = window.jspdf;
+const doc = new jsPDF();
+doc.text(finalText, 10, 10, { maxWidth: 180 });
+doc.save("legal-statement.pdf");
+}
+</script>
+</body>
+</html>
