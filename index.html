@@ -97,6 +97,7 @@ padding: 15px;
 margin-top: 20px;
 border-radius: 8px;
 border: 1px solid #e0e0e0;
+user-select: none; /* Prevent copy */
 }
 
 .notice {
@@ -221,13 +222,13 @@ It does <strong>not</strong> provide legal advice and does not replace an attorn
 let finalText = "";
 
 function generate() {
-const name = document.getElementById("name").value;
+const name = document.getElementById("name").value || "[Name]";
 const state = document.getElementById("state").value || "the applicable jurisdiction";
 const matter = document.getElementById("matter").value;
 const recipient = document.getElementById("recipient").value;
-const facts = document.getElementById("facts").value;
-const concerns = document.getElementById("concerns").value;
-const request = document.getElementById("request").value;
+const facts = document.getElementById("facts").value || "[Summary of events]";
+const concerns = document.getElementById("concerns").value || "[Key concerns]";
+const request = document.getElementById("request").value || "[Requested outcome]";
 
 finalText = `
 STATEMENT FOR LEGAL COMMUNICATION
@@ -236,8 +237,6 @@ Name: ${name}
 State / Jurisdiction: ${state}
 Matter Type: ${matter}
 Intended Recipient: ${recipient}
-
-I respectfully submit this written statement to clearly and accurately communicate relevant information regarding my legal matter. This statement is intended to assist in organized communication and is based on my personal knowledge and recollection.
 
 SUMMARY OF EVENTS:
 ${facts}
@@ -248,24 +247,35 @@ ${concerns}
 REQUEST / PURPOSE OF THIS STATEMENT:
 ${request}
 
-I affirm that the information provided above is true and accurate to the best of my knowledge and belief.
-
 Respectfully submitted,
 
 ${name}
+_________________________
 Date: ${new Date().toLocaleDateString()}
 `;
 
+// Show truncated preview to protect full content
 document.getElementById("preview").innerText =
-finalText.substring(0, 650) + "\n\n--- Preview Only ---";
-
+finalText.substring(0, 150) + "\n\n--- Preview Only ---";
 document.getElementById("paywall").style.display = "block";
 }
 
 function downloadPDF() {
 const { jsPDF } = window.jspdf;
-const doc = new jsPDF();
-doc.text(finalText, 10, 10, { maxWidth: 180 });
+const doc = new jsPDF({ unit: "pt", format: "letter" });
+const margin = 40;
+let y = margin;
+
+doc.setFontSize(16);
+doc.setFont(undefined, 'bold');
+doc.text("STATEMENT FOR LEGAL COMMUNICATION", margin, y);
+y += 30;
+
+doc.setFontSize(12);
+doc.setFont(undefined, 'normal');
+const lines = doc.splitTextToSize(finalText, 520); // wrap text
+lines.forEach(line => { doc.text(line, margin, y); y += 18; });
+
 doc.save("legal-statement.pdf");
 }
 </script>
